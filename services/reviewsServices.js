@@ -1,26 +1,5 @@
-import fs from "fs/promises";
-import path from "path";
-import { nanoid } from "nanoid";
+import Review from "../models/Review.js";
 
-const reviewsPath = path.resolve("db", "reviews.json");
+export const getAllReviws = () => Review.find();
 
-const updateReviews = (reviews) =>
-  fs.writeFile(reviewsPath, JSON.stringify(reviews, null, 2));
-
-export const getAllReviws = async () => {
-  const data = await fs.readFile(reviewsPath);
-  return JSON.parse(data);
-};
-
-export const addReview = async (data) => {
-  const reviews = await getAllReviws();
-  const newReview = {
-    id: nanoid(),
-    ...data,
-  };
-
-  reviews.push(newReview);
-  await updateReviews(reviews);
-
-  return newReview;
-};
+export const addReview = (data) => Review.create(data);
