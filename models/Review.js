@@ -5,6 +5,8 @@ const reviewSchema = new Schema(
     name: {
       type: String,
       required: true,
+      minlength: 2,
+      maxlength: 20,
     },
     rating: {
       type: Number,
@@ -12,9 +14,11 @@ const reviewSchema = new Schema(
       min: 1,
       max: 5,
     },
-    message: {
+    review: {
       type: String,
       required: true,
+      minlength: 4,
+      maxlength: 500,
     },
   },
   { versionKey: false }
