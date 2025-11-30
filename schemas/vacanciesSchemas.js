@@ -6,5 +6,5 @@ export const vacancySendEmailSchema = Joi.object({
   phoneNumber: Joi.string()
     .pattern(/^[\d\s+()-]+$/)
     .required(),
-  recaptchaToken: Joi.string().valid("SKIP_RECAPTCHA").required(),
+  recaptchaToken: Joi.string().required(),
 });

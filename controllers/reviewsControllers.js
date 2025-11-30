@@ -18,22 +18,18 @@ const add = async (req, res, next) => {
   try {
     const { recaptchaToken, name, review, rating } = req.body;
 
-    if (recaptchaToken === "SKIP_RECAPTCHA") {
-      console.log("RECAPTCHA is skipped(test mode)");
-    } else {
-      const verifyUrl = `https://www.google.com/recaptcha/api/siteverify`;
-      const response = await axios.post(verifyUrl, null, {
-        params: {
-          secret: RECAPTCHA_SECRET_KEY,
-          response: recaptchaToken,
-        },
-      });
+    const verifyUrl = `https://www.google.com/recaptcha/api/siteverify`;
+    const response = await axios.post(verifyUrl, null, {
+      params: {
+        secret: RECAPTCHA_SECRET_KEY,
+        response: recaptchaToken,
+      },
+    });
 
-      const { success, score } = response.data;
+    const { success, score } = response.data;
 
-      if (!success || score < 0.5) {
-        throw HttpError(400, "Виглядаєте як робот, спробуйте ще раз");
-      }
+    if (!success || score < 0.5) {
+      throw HttpError(400, "Виглядаєте як робот, спробуйте ще раз");
     }
 
     const result = await reviewsServices.addReview({
