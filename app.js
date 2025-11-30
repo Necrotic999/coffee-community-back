@@ -3,6 +3,7 @@ import cors from "cors";
 import reviewsRouter from "./routes/reviewsRouter.js";
 import mongoose from "mongoose";
 import "dotenv/config";
+import vacanciesRouter from "./routes/vacanciesRouter.js";
 
 const app = express();
 
@@ -10,6 +11,8 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/reviews", reviewsRouter);
+
+app.use("/api/vacancies", vacanciesRouter);
 
 app.use((_, res) => {
   res.status(404).json({ message: "Route not found" });

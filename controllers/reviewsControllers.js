@@ -1,5 +1,6 @@
 import * as reviewsServices from "../services/reviewsServices.js";
 import axios from "axios";
+import "dotenv/config";
 
 const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
 
@@ -31,9 +32,7 @@ const add = async (req, res, next) => {
       const { success, score } = response.data;
 
       if (!success || score < 0.5) {
-        return res
-          .status(400)
-          .json({ message: "Виглядаєте як робот. Спробуйте ще раз." });
+        throw HttpError(400, "Виглядаєте як робот, спробуйте ще раз");
       }
     }
 
