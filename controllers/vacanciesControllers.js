@@ -1,6 +1,7 @@
 import nodemailer from "nodemailer";
 import axios from "axios";
 import "dotenv/config";
+import HttpError from "../helpers/HttpError";
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
