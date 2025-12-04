@@ -1,17 +1,11 @@
-import nodemailer from "nodemailer";
 import axios from "axios";
 import "dotenv/config";
 import HttpError from "../helpers/HttpError.js";
-
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+import { Resend } from "resend";
 
 const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendEmail = async (req, res, next) => {
   try {
@@ -41,8 +35,8 @@ export const sendEmail = async (req, res, next) => {
 
     console.log("[EMAIL] Starting to send email");
     const emailStart = Date.now();
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    await resend.emails.send({
+      from: process.env.EMAIL_FROM,
       to: process.env.TARGET_EMAIL,
       subject: "Нова заявка",
       text: `Новий претендент на вакансію: ${name} ${surname}\nНомер телефону: ${phoneNumber}`,
