@@ -16,6 +16,10 @@ app.use(
 );
 app.use(express.json());
 
+app.get("/", (_, res) => {
+  res.json({ status: "Server is running" });
+});
+
 app.use("/api/reviews", reviewsRouter);
 
 app.use("/api/vacancies", vacanciesRouter);
@@ -29,13 +33,13 @@ app.use((err, req, res, next) => {
   res.status(status).json({ message });
 });
 
-const { DB_HOST } = process.env;
+const { DB_HOST, PORT = 8000 } = process.env;
 
 mongoose
   .connect(DB_HOST)
   .then(() => {
-    app.listen(8000, () => {
-      console.log("Server is running. Use our API on port: 8000");
+    app.listen(PORT, () => {
+      console.log(`Server is running. Use our API on port: ${PORT}`);
     });
   })
   .catch((error) => {

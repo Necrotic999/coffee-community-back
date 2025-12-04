@@ -15,34 +15,47 @@ const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
 
 export const sendEmail = async (req, res, next) => {
   try {
-    const { name, surname, phoneNumber } = req.body;
+    console.log("[START] Processing vacancy application");
+    const { name, surname, phoneNumber, recaptchaToken } = req.body;
 
-    // const verifyUrl = `https://www.google.com/recaptcha/api/siteverify`;
-    // const response = await axios.post(verifyUrl, null, {
-    //   params: {
-    //     secret: RECAPTCHA_SECRET_KEY,
-    //     response: recaptchaToken,
-    //   },
-    // });
+    console.log("[RECAPTCHA] Starting verification");
+    const verifyUrl = `https://www.google.com/recaptcha/api/siteverify`;
 
-    // const { success, score } = response.data;
+    const recaptchaStart = Date.now();
+    const response = await axios.post(verifyUrl, null, {
+      params: {
+        secret: RECAPTCHA_SECRET_KEY,
+        response: recaptchaToken,
+      },
+      timeout: 10000,
+    });
+    console.log(`[RECAPTCHA] Completed in ${Date.now() - recaptchaStart}ms`);
 
-    // if (!success || score < 0.5) {
-    //   throw HttpError(400, "Виглядаєте як робот, спробуйте ще раз");
-    // }
+    const { success, score } = response.data;
+    console.log(`[RECAPTCHA] Result - success: ${success}, score: ${score}`);
 
+    if (!success || score < 0.5) {
+      console.log("[RECAPTCHA] Validation failed");
+      throw HttpError(400, "Виглядаєте як робот, спробуйте ще раз");
+    }
+
+    console.log("[EMAIL] Starting to send email");
+    const emailStart = Date.now();
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: process.env.TARGET_EMAIL,
       subject: "Нова заявка",
       text: `Новий претендент на вакансію: ${name} ${surname}\nНомер телефону: ${phoneNumber}`,
     });
+    console.log(`[EMAIL] Sent successfully in ${Date.now() - emailStart}ms`);
 
+    console.log("[SUCCESS] Request completed");
     return res.status(201).json({
       success: true,
       message: "Заявку успішно надіслано!",
     });
   } catch (error) {
+    console.error("[ERROR]", error.message);
     next(error);
   }
 };
