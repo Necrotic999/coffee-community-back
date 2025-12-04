@@ -15,21 +15,21 @@ const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
 
 export const sendEmail = async (req, res, next) => {
   try {
-    const { name, surname, phoneNumber, recaptchaToken } = req.body;
+    const { name, surname, phoneNumber } = req.body;
 
-    const verifyUrl = `https://www.google.com/recaptcha/api/siteverify`;
-    const response = await axios.post(verifyUrl, null, {
-      params: {
-        secret: RECAPTCHA_SECRET_KEY,
-        response: recaptchaToken,
-      },
-    });
+    // const verifyUrl = `https://www.google.com/recaptcha/api/siteverify`;
+    // const response = await axios.post(verifyUrl, null, {
+    //   params: {
+    //     secret: RECAPTCHA_SECRET_KEY,
+    //     response: recaptchaToken,
+    //   },
+    // });
 
-    const { success, score } = response.data;
+    // const { success, score } = response.data;
 
-    if (!success || score < 0.5) {
-      throw HttpError(400, "Виглядаєте як робот, спробуйте ще раз");
-    }
+    // if (!success || score < 0.5) {
+    //   throw HttpError(400, "Виглядаєте як робот, спробуйте ще раз");
+    // }
 
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
